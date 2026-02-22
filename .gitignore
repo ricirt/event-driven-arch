@@ -1,5 +1,6 @@
 # Binaries
 bin/
+server
 *.exe
 *.exe~
 *.dll
@@ -20,9 +21,8 @@ go.work.sum
 .env
 .env.local
 
-# Generated docs
+# Generated docs (swag init output — not our hand-authored swagger.yaml)
 docs/swagger.json
-docs/swagger.yaml
 docs/docs.go
 
 # IDE

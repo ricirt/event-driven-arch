@@ -1,0 +1,448 @@
+openapi: "3.0.3"
+info:
+  title: Event-Driven Notification System
+  description: |
+    Scalable notification system that processes and delivers messages through
+    SMS, Email, and Push channels with priority queuing, rate limiting,
+    retry logic, and real-time status tracking.
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:8080
+    description: Local development
+
+tags:
+  - name: notifications
+    description: Single notification operations
+  - name: batches
+    description: Batch notification operations
+  - name: metrics
+    description: Observability endpoints
+  - name: system
+    description: Health and infrastructure
+
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      tags: [system]
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /metrics:
+    get:
+      summary: Prometheus metrics scrape endpoint
+      tags: [metrics]
+      responses:
+        "200":
+          description: Prometheus text format metrics
+
+  /api/v1/notifications:
+    post:
+      summary: Create a notification
+      tags: [notifications]
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Optional idempotency key. If a notification with this key already exists, the existing record is returned (HTTP 200) instead of creating a duplicate.
+          schema:
+            type: string
+        - name: X-Correlation-ID
+          in: header
+          description: Optional correlation ID for distributed tracing. Generated automatically if absent.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNotificationRequest"
+            examples:
+              sms:
+                summary: High-priority SMS
+                value:
+                  channel: sms
+                  recipient: "+905551234567"
+                  content: "Your order has shipped."
+                  priority: high
+              scheduled_email:
+                summary: Scheduled email
+                value:
+                  channel: email
+                  recipient: "user@example.com"
+                  content: "Your weekly digest is ready."
+                  priority: normal
+                  scheduled_at: "2026-03-01T09:00:00Z"
+      responses:
+        "201":
+          description: Notification created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+        "200":
+          description: Duplicate — existing notification returned (idempotency key matched)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+    get:
+      summary: List notifications with filtering and pagination
+      tags: [notifications]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/Status"
+        - name: channel
+          in: query
+          schema:
+            $ref: "#/components/schemas/Channel"
+        - name: from
+          in: query
+          description: Filter notifications created after this time (RFC3339)
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Filter notifications created before this time (RFC3339)
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: Paginated list of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+                  total:
+                    type: integer
+                    example: 150
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 20
+
+  /api/v1/notifications/batch:
+    post:
+      summary: Create up to 1000 notifications in a single request
+      tags: [batches]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBatchRequest"
+      responses:
+        "201":
+          description: Batch created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Batch"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /api/v1/notifications/{id}:
+    get:
+      summary: Get a notification by ID
+      tags: [notifications]
+      parameters:
+        - $ref: "#/components/parameters/NotificationID"
+      responses:
+        "200":
+          description: Notification found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: Cancel a pending notification
+      tags: [notifications]
+      parameters:
+        - $ref: "#/components/parameters/NotificationID"
+      responses:
+        "204":
+          description: Notification cancelled
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Notification cannot be cancelled (already sent, processing, or cancelled)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/batches/{id}:
+    get:
+      summary: Get a batch and all its notifications
+      tags: [batches]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Batch with notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  batch:
+                    $ref: "#/components/schemas/Batch"
+                  notifications:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Notification"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/metrics:
+    get:
+      summary: Real-time queue depth snapshot
+      tags: [metrics]
+      responses:
+        "200":
+          description: Current queue depths per priority tier
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  queue_depth:
+                    type: object
+                    properties:
+                      high:
+                        type: integer
+                        example: 0
+                      normal:
+                        type: integer
+                        example: 42
+                      low:
+                        type: integer
+                        example: 7
+                      total:
+                        type: integer
+                        example: 49
+
+components:
+  parameters:
+    NotificationID:
+      name: id
+      in: path
+      required: true
+      description: Notification UUID
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    Channel:
+      type: string
+      enum: [sms, email, push]
+      example: sms
+
+    Priority:
+      type: string
+      enum: [high, normal, low]
+      example: normal
+
+    Status:
+      type: string
+      enum: [pending, queued, processing, sent, failed, cancelled, scheduled]
+      example: queued
+
+    CreateNotificationRequest:
+      type: object
+      required: [channel, recipient, content, priority]
+      properties:
+        channel:
+          $ref: "#/components/schemas/Channel"
+        recipient:
+          type: string
+          example: "+905551234567"
+        content:
+          type: string
+          maxLength: 4096
+          example: "Your verification code is 123456."
+        priority:
+          $ref: "#/components/schemas/Priority"
+        scheduled_at:
+          type: string
+          format: date-time
+          description: Schedule delivery for a future time (optional)
+          example: "2026-03-01T10:00:00Z"
+
+    CreateBatchRequest:
+      type: object
+      required: [notifications]
+      properties:
+        notifications:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items:
+            $ref: "#/components/schemas/CreateNotificationRequest"
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        batch_id:
+          type: string
+          format: uuid
+          nullable: true
+        channel:
+          $ref: "#/components/schemas/Channel"
+        recipient:
+          type: string
+        content:
+          type: string
+        priority:
+          $ref: "#/components/schemas/Priority"
+        status:
+          $ref: "#/components/schemas/Status"
+        idempotency_key:
+          type: string
+          nullable: true
+        retry_count:
+          type: integer
+          example: 0
+        max_retries:
+          type: integer
+          example: 3
+        next_retry_at:
+          type: string
+          format: date-time
+          nullable: true
+        scheduled_at:
+          type: string
+          format: date-time
+          nullable: true
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        provider_message_id:
+          type: string
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Batch:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        total:
+          type: integer
+          example: 100
+        pending:
+          type: integer
+          example: 85
+        sent:
+          type: integer
+          example: 12
+        failed:
+          type: integer
+          example: 3
+        cancelled:
+          type: integer
+          example: 0
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "not found"
+
+  responses:
+    BadRequest:
+      description: Invalid JSON body
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    UnprocessableEntity:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ServiceUnavailable:
+      description: Queue is at capacity
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
