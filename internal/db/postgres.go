@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
@@ -38,8 +39,18 @@ func Connect(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error) {
 // Migrate runs all pending up-migrations from the migrations/ directory.
 // It is idempotent: already-applied migrations are skipped.
 func Migrate(databaseURL string) error {
-	// golang-migrate's pgx/v5 driver expects the scheme to be "pgx5://"
-	migrationURL := "pgx5://" + databaseURL[len("postgres://"):]
+	// golang-migrate's pgx/v5 driver expects the scheme "pgx5://".
+	// Support both "postgres://" and "postgresql://" connection string forms.
+	var rest string
+	switch {
+	case strings.HasPrefix(databaseURL, "postgresql://"):
+		rest = databaseURL[len("postgresql://"):]
+	case strings.HasPrefix(databaseURL, "postgres://"):
+		rest = databaseURL[len("postgres://"):]
+	default:
+		rest = databaseURL
+	}
+	migrationURL := "pgx5://" + rest
 
 	m, err := migrate.New("file://migrations", migrationURL)
 	if err != nil {

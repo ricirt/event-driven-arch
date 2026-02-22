@@ -218,7 +218,8 @@ All settings are environment variables with sensible defaults:
 |---|---|---|
 | `DATABASE_URL` | *(required)* | PostgreSQL connection string |
 | `HTTP_PORT` | `8080` | Server listen port |
-| `PROVIDER_BASE_URL` | *(required)* | External notification provider URL |
+| `PROVIDER_BASE_URL` | *(required)* | External notification provider URL (e.g. webhook.site) |
+| `PROVIDER_TIMEOUT` | `10s` | HTTP timeout for each provider request |
 | `SMS_WORKERS` | `5` | Number of SMS worker goroutines |
 | `EMAIL_WORKERS` | `5` | Number of Email worker goroutines |
 | `PUSH_WORKERS` | `5` | Number of Push worker goroutines |

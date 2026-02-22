@@ -1,4 +1,4 @@
-.PHONY: all build run test test-cover lint docker-up docker-down clean
+.PHONY: all build run test test-cover lint docker-up docker-down migrate-up migrate-down clean
 
 BINARY   = server
 MAIN     = ./cmd/server
@@ -33,6 +33,14 @@ docker-up:
 ## docker-down: stop and remove all containers and volumes
 docker-down:
 	docker compose down -v
+
+## migrate-up: apply all pending database migrations (requires DATABASE_URL)
+migrate-up:
+	migrate -path migrations -database "$(DATABASE_URL)" up
+
+## migrate-down: roll back the last database migration (requires DATABASE_URL)
+migrate-down:
+	migrate -path migrations -database "$(DATABASE_URL)" down 1
 
 ## clean: remove compiled binary and coverage artifacts
 clean:
