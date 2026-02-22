@@ -192,5 +192,7 @@ func (s *NotificationService) enqueue(ctx context.Context, n *domain.Notificatio
 
 	if err := s.repo.UpdateStatus(ctx, n.ID, domain.StatusQueued); err != nil {
 		s.logger.Error("failed to update status to queued", zap.String("id", n.ID), zap.Error(err))
+		return
 	}
+	n.Status = domain.StatusQueued
 }
