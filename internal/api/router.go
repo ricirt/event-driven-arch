@@ -9,10 +9,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 
-	"github.com/notifyhub/event-driven-arch/internal/api/handler"
-	apimw "github.com/notifyhub/event-driven-arch/internal/api/middleware"
-	"github.com/notifyhub/event-driven-arch/internal/queue"
-	"github.com/notifyhub/event-driven-arch/internal/service"
+	"github.com/ricirt/event-driven-arch/internal/api/handler"
+	apimw "github.com/ricirt/event-driven-arch/internal/api/middleware"
+	"github.com/ricirt/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/service"
 )
 
 // NewRouter wires the chi router, attaches all middleware, and registers

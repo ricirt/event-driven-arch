@@ -9,7 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/notifyhub/event-driven-arch/internal/config"
+	"github.com/ricirt/event-driven-arch/internal/config"
 )
 
 // Connect creates a pgxpool connection pool and verifies connectivity.

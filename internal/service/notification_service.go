@@ -9,9 +9,9 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
-	"github.com/notifyhub/event-driven-arch/internal/queue"
-	"github.com/notifyhub/event-driven-arch/internal/repository"
+	"github.com/ricirt/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/repository"
 )
 
 // NotificationService coordinates the repository and queue.

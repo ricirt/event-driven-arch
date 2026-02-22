@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 func respondJSON(w http.ResponseWriter, status int, v any) {

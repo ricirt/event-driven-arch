@@ -6,9 +6,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
-	"github.com/notifyhub/event-driven-arch/internal/queue"
-	"github.com/notifyhub/event-driven-arch/internal/repository"
+	"github.com/ricirt/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/repository"
 )
 
 // RetryWorker polls the database for failed notifications whose

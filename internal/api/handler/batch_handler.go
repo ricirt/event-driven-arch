@@ -7,8 +7,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
-	"github.com/notifyhub/event-driven-arch/internal/service"
+	"github.com/ricirt/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/service"
 )
 
 // BatchHandler handles batch-level endpoints.

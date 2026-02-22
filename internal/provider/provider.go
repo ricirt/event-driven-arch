@@ -3,7 +3,7 @@ package provider
 import (
 	"context"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 // SendRequest is the JSON body posted to the external provider.

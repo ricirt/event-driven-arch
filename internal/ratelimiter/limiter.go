@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/time/rate"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 // ChannelLimiters holds one token bucket limiter per channel type.

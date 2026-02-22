@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/notifyhub/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/queue"
 )
 
 // MetricsHandler serves a human-readable JSON queue snapshot.

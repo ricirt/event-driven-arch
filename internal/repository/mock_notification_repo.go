@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 // MockNotificationRepository is a hand-written, in-memory implementation of

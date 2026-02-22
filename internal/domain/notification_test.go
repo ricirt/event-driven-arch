@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 func TestCreateNotificationRequest_Validate(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 // WebhookProvider delivers notifications by POSTing to webhook.site.

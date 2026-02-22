@@ -1,6 +1,6 @@
 package queue
 
-import "github.com/notifyhub/event-driven-arch/internal/domain"
+import "github.com/ricirt/event-driven-arch/internal/domain"
 
 // Item is the minimal data placed on the queue.
 // Workers fetch the full Notification from the DB using the ID,

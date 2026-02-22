@@ -9,9 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 
-	apimw "github.com/notifyhub/event-driven-arch/internal/api/middleware"
-	"github.com/notifyhub/event-driven-arch/internal/domain"
-	"github.com/notifyhub/event-driven-arch/internal/service"
+	apimw "github.com/ricirt/event-driven-arch/internal/api/middleware"
+	"github.com/ricirt/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/service"
 )
 
 // NotificationHandler handles single-notification CRUD endpoints.

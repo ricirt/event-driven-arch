@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 // NotificationRepository defines all persistence operations for notifications.

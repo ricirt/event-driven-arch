@@ -1,4 +1,4 @@
-module github.com/notifyhub/event-driven-arch
+module github.com/ricirt/event-driven-arch
 
 go 1.24.0
 

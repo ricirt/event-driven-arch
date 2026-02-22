@@ -11,16 +11,16 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
 
-	"github.com/notifyhub/event-driven-arch/internal/api"
-	"github.com/notifyhub/event-driven-arch/internal/config"
-	"github.com/notifyhub/event-driven-arch/internal/db"
-	"github.com/notifyhub/event-driven-arch/internal/metrics"
-	"github.com/notifyhub/event-driven-arch/internal/provider"
-	"github.com/notifyhub/event-driven-arch/internal/queue"
-	"github.com/notifyhub/event-driven-arch/internal/ratelimiter"
-	"github.com/notifyhub/event-driven-arch/internal/repository"
-	"github.com/notifyhub/event-driven-arch/internal/service"
-	"github.com/notifyhub/event-driven-arch/internal/worker"
+	"github.com/ricirt/event-driven-arch/internal/api"
+	"github.com/ricirt/event-driven-arch/internal/config"
+	"github.com/ricirt/event-driven-arch/internal/db"
+	"github.com/ricirt/event-driven-arch/internal/metrics"
+	"github.com/ricirt/event-driven-arch/internal/provider"
+	"github.com/ricirt/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/ratelimiter"
+	"github.com/ricirt/event-driven-arch/internal/repository"
+	"github.com/ricirt/event-driven-arch/internal/service"
+	"github.com/ricirt/event-driven-arch/internal/worker"
 )
 
 func main() {

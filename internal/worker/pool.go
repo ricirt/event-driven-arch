@@ -7,12 +7,12 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/notifyhub/event-driven-arch/internal/config"
-	"github.com/notifyhub/event-driven-arch/internal/domain"
-	"github.com/notifyhub/event-driven-arch/internal/provider"
-	"github.com/notifyhub/event-driven-arch/internal/queue"
-	"github.com/notifyhub/event-driven-arch/internal/ratelimiter"
-	"github.com/notifyhub/event-driven-arch/internal/repository"
+	"github.com/ricirt/event-driven-arch/internal/config"
+	"github.com/ricirt/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/provider"
+	"github.com/ricirt/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/ratelimiter"
+	"github.com/ricirt/event-driven-arch/internal/repository"
 )
 
 // MetricHooks carries the metric callback functions injected by main.

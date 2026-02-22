@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/domain"
 )
 
 // PriorityQueue dispatches items to one of three buffered channels based on priority.

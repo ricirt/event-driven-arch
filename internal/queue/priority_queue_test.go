@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/notifyhub/event-driven-arch/internal/domain"
-	"github.com/notifyhub/event-driven-arch/internal/queue"
+	"github.com/ricirt/event-driven-arch/internal/domain"
+	"github.com/ricirt/event-driven-arch/internal/queue"
 )
 
 func item(id string, p domain.Priority) queue.Item {
