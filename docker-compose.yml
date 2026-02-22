@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: notify
+      POSTGRES_PASSWORD: notify
+      POSTGRES_DB: notifications
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notify -d notifications"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://notify:notify@postgres:5432/notifications?sslmode=disable
+      # Set PROVIDER_BASE_URL to your webhook.site URL, e.g.:
+      #   https://webhook.site/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      PROVIDER_BASE_URL: ${PROVIDER_BASE_URL:-https://webhook.site/your-uuid-here}
+      HTTP_PORT: 8080
+      SMS_WORKERS: 5
+      EMAIL_WORKERS: 5
+      PUSH_WORKERS: 5
+      RATE_LIMIT_PER_CHANNEL: 100
+      RETRY_BACKOFF_1: 5s
+      RETRY_BACKOFF_2: 30s
+      RETRY_BACKOFF_3: 120s
+      SCHEDULER_INTERVAL: 5s
+      RETRY_INTERVAL: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
